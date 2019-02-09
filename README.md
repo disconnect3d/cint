@@ -4,11 +4,11 @@ This is an attempt to wrap `ctypes.c_*` types so that the arithmetic operators w
 - value overflow/underflow may occur (yeah, I know that unsigned overflows are UB in C but they _usually_ work)
 - when making calculations of two different cint types, the result type will be of bigger or/and unsigned type
 
-**NOTE: This is not production ready, the second goal is not there yet**
+**NOTE: This is not production ready, the second goal is not tested yet** 
 
 #### Example
 
-```
+```python
 from cint import I32
 
 x = I32(I32.MIN)
