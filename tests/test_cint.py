@@ -1,9 +1,5 @@
 import pytest
-from cint import I8, I16, I32, I64, U8, U16, U32, U64
-
-SIGNED_INTS = (I8, I16, I32, I64)
-UNSIGNED_INTS = (U8, U16, U32, U64)
-INTS = SIGNED_INTS + UNSIGNED_INTS
+from cint import I8, I16, I32, I64, U8, U16, U32, U64, SIGNED_INTS, UNSIGNED_INTS, INTS
 
 
 @pytest.mark.parametrize('ct', SIGNED_INTS)
