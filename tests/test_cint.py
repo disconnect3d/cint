@@ -1,5 +1,5 @@
 import pytest
-from ctypess import I8, I16, I32, I64, U8, U16, U32, U64
+from cint import I8, I16, I32, I64, U8, U16, U32, U64
 
 SIGNED_INTS = (I8, I16, I32, I64)
 UNSIGNED_INTS = (U8, U16, U32, U64)
