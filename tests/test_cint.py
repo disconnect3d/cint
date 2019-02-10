@@ -1,5 +1,5 @@
 import pytest
-from cint import I8, I16, I32, I64, U8, U16, U32, U64, SIGNED_INTS, INTS
+from cint import I8, I16, I32, I64, U8, U16, U32, U64, SIGNED_INTS, UNSIGNED_INTS, INTS
 from operator import (
     add, sub, mul, truediv, pow, mod, lshift, rshift, and_, or_, xor,
     iadd, isub, imul, itruediv, ipow, imod, ilshift, irshift, iand, ior, ixor
@@ -78,3 +78,23 @@ def test_alternative_operators_return_the_same_val(ct, op):
 @pytest.mark.parametrize('op', (iadd, isub, imul, itruediv, ipow, imod, ilshift, irshift, iand, ior, ixor))
 def test_inplace_operators_not_returning_other_type(ct, op):
     assert isinstance(op(ct(1), U64(1)), ct)
+
+
+@pytest.mark.parametrize('uint', UNSIGNED_INTS)
+def test_signed_vs_unsigned_comparisons(uint):
+    """
+    cxx is a C++ irc eval bot (see http://www.eelis.net/geordi/)
+
+    <@disconnect3d> cxx << (uint64_t{1} > -1)
+    <+cxx> warning: comparison of integer expressions of different signedness:
+           'uint64_t' {aka 'long unsigned int'} and 'int'
+
+    # the -w ignores warnings
+
+    <@disconnect3d> cxx -w << (uint64_t{1} > -1)
+    <+cxx> false
+    """
+    val = uint(1)
+    assert (val > -1) is False
+    assert (val < -1) is True
+    assert (val == 1) is True

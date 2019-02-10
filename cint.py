@@ -87,16 +87,16 @@ class WrappedCint:
         return self.value == calc(other)
 
     def __gt__(self, other):
-        return self.value > calc(other)
+        return self.value > self.__stronger_type(other)(other).value
 
     def __lt__(self, other):
-        return self.value < calc(other)
+        return self.value < self.__stronger_type(other)(other).value
 
     def __ge__(self, other):
-        return self.value >= calc(other)
+        return self.value >= self.__stronger_type(other)(other).value
 
     def __le__(self, other):
-        return self.value <= calc(other)
+        return self.value <= self.__stronger_type(other)(other).value
 
     def __lshift__(self, other):
         return self.__stronger_type(other)(self.value << calc(other))
