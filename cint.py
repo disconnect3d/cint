@@ -23,7 +23,7 @@ class WrappedCint:
 
         other = other.__class__
 
-        return cls if (cls.SIZE, cls.SIGNED) > (other.SIZE, other.SIGNED) else other
+        return cls if (cls.SIZE, cls.UNSIGNED) > (other.SIZE, other.UNSIGNED) else other
 
     def __add__(self, other):
         return self.__stronger_type(other)(self.value + calc(other))
@@ -69,7 +69,7 @@ class WrappedCint:
     def __rtruediv__(self, other):
         return self.__stronger_type(other)(calc(other) // self.value)
 
-    def __idiv__(self, other):
+    def __itruediv__(self, other):
         self.value //= calc(other)
         return self
 
@@ -180,7 +180,7 @@ class WrappedCint:
 class I8(WrappedCint, ctypes.c_int8):
     MIN = -2 ** 7
     MAX = 2 ** 7 - 1
-    SIGNED = True
+    UNSIGNED = False
     CTYPEDEF = 'int8_t'
     SIZE = 1
 
@@ -188,7 +188,7 @@ class I8(WrappedCint, ctypes.c_int8):
 class I16(WrappedCint, ctypes.c_int16):
     MIN = -2 ** 15
     MAX = 2 ** 15 - 1
-    SIGNED = True
+    UNSIGNED = False
     CTYPEDEF = 'int16_t'
     SIZE = 2
 
@@ -196,7 +196,7 @@ class I16(WrappedCint, ctypes.c_int16):
 class I32(WrappedCint, ctypes.c_int32):
     MIN = -2 ** 31
     MAX = 2 ** 31 - 1
-    SIGNED = True
+    UNSIGNED = False
     CTYPEDEF = 'int32_t'
     SIZE = 4
 
@@ -204,7 +204,7 @@ class I32(WrappedCint, ctypes.c_int32):
 class I64(WrappedCint, ctypes.c_int64):
     MIN = -2 ** 63
     MAX = 2 ** 63 - 1
-    SIGNED = True
+    UNSIGNED = False
     CTYPEDEF = 'int64_t'
     SIZE = 8
 
@@ -212,7 +212,7 @@ class I64(WrappedCint, ctypes.c_int64):
 class U8(WrappedCint, ctypes.c_uint8):
     MIN = 0
     MAX = 2 ** 8 - 1
-    SIGNED = False
+    UNSIGNED = True
     CTYPEDEF = 'uint8_t'
     SIZE = 1
 
@@ -220,7 +220,7 @@ class U8(WrappedCint, ctypes.c_uint8):
 class U16(WrappedCint, ctypes.c_uint16):
     MIN = 0
     MAX = 2 ** 16 - 1
-    SIGNED = False
+    UNSIGNED = True
     CTYPEDEF = 'uint16_t'
     SIZE = 2
 
@@ -228,7 +228,7 @@ class U16(WrappedCint, ctypes.c_uint16):
 class U32(WrappedCint, ctypes.c_uint32):
     MIN = 0
     MAX = 2 ** 32 - 1
-    SIGNED = False
+    UNSIGNED = True
     CTYPEDEF = 'uint32_t'
     SIZE = 4
 
@@ -236,7 +236,7 @@ class U32(WrappedCint, ctypes.c_uint32):
 class U64(WrappedCint, ctypes.c_uint64):
     MIN = 0
     MAX = 2 ** 64 - 1
-    SIGNED = False
+    UNSIGNED = True
     CTYPEDEF = 'uint64_t'
     SIZE = 8
 
