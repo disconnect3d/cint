@@ -1,9 +1,11 @@
-import pytest
-from cint import I8, I16, I32, I64, U8, U16, U32, U64, SIGNED_INTS, UNSIGNED_INTS, INTS
 from operator import (
     add, sub, mul, truediv, pow, mod, lshift, rshift, and_, or_, xor,
     iadd, isub, imul, itruediv, ipow, imod, ilshift, irshift, iand, ior, ixor
 )
+
+import pytest
+
+from cint import I8, U64, SIGNED_INTS, UNSIGNED_INTS, INTS
 
 
 @pytest.mark.parametrize('ct', SIGNED_INTS)
@@ -53,7 +55,7 @@ def test_overflows_and_underflows(ct):
 @pytest.mark.parametrize('ct', INTS)
 def test_operators(ct):
     x = 1
-    assert x + ct(x) == ct(2*x) == 2*x == ct(x) + x
+    assert x + ct(x) == ct(2 * x) == 2 * x == ct(x) + x
 
 
 @pytest.mark.parametrize('ct', INTS)
