@@ -28,10 +28,6 @@ class WrappedCint:
     def __add__(self, other):
         return self.__stronger_type(other)(self.value + calc(other))
 
-    def __iadd__(self, other):
-        self.value += calc(other)
-        return self
-
     __radd__ = __add__
 
     def __sub__(self, other):
@@ -40,18 +36,10 @@ class WrappedCint:
     def __rsub__(self, other):
         return self.__stronger_type(other)(calc(other) - self.value)
 
-    def __isub__(self, other):
-        self.value -= calc(other)
-        return self
-
     def __mul__(self, other):
         return self.__stronger_type(other)(self.value * calc(other))
 
     __rmul__ = __mul__
-
-    def __imul__(self, other):
-        self.value *= calc(other)
-        return self
 
     def __pow__(self, other):
         return self.__stronger_type(other)(self.value ** calc(other))
@@ -59,29 +47,17 @@ class WrappedCint:
     def __rpow__(self, other):
         return self.__stronger_type(other)(calc(other) ** self.value)
 
-    def __ipow__(self, other):
-        self.value **= calc(other)
-        return self
-
     def __truediv__(self, other):
         return self.__stronger_type(other)(self.value // calc(other))
 
     def __rtruediv__(self, other):
         return self.__stronger_type(other)(calc(other) // self.value)
 
-    def __itruediv__(self, other):
-        self.value //= calc(other)
-        return self
-
     def __mod__(self, other):
         return self.__stronger_type(other)(self.value % calc(other))
 
     def __rmod__(self, other):
         return self.__stronger_type(other)(calc(other) % self.value)
-
-    def __imod__(self, other):
-        self.value %= calc(other)
-        return self
 
     def __eq__(self, other):
         return self.value == calc(other)
@@ -104,19 +80,11 @@ class WrappedCint:
     def __rlshift__(self, other):
         return self.__stronger_type(other)(calc(other) << self.value)
 
-    def __ilshift__(self, other):
-        self.value <<= calc(other)
-        return self
-
     def __rshift__(self, other):
         return self.__stronger_type(other)(self.value >> calc(other))
 
     def __rrshift__(self, other):
         return self.__stronger_type(other)(calc(other) >> self.value)
-
-    def __irshift__(self, other):
-        self.value >>= calc(other)
-        return self
 
     def __and__(self, other):
         return self.__stronger_type(other)(self.value & calc(other))
@@ -124,29 +92,17 @@ class WrappedCint:
     def __rand__(self, other):
         return self.__stronger_type(other)(calc(other) & self.value)
 
-    def __iand__(self, other):
-        self.value &= calc(other)
-        return self
-
     def __or__(self, other):
         return self.__stronger_type(other)(self.value | calc(other))
 
     def __ror__(self, other):
         return self.__stronger_type(other)(calc(other) | self.value)
 
-    def __ior__(self, other):
-        self.value |= calc(other)
-        return self
-
     def __xor__(self, other):
         return self.__stronger_type(other)(self.value ^ calc(other))
 
     def __rxor__(self, other):
         return self.__stronger_type(other)(calc(other) ^ self.value)
-
-    def __ixor__(self, other):
-        self.value ^= calc(other)
-        return self
 
     def __int__(self):
         return int(self.value)
@@ -175,6 +131,70 @@ class WrappedCint:
         return '{}({})'.format(self.__class__.__name__, self.value)
 
     __index__ = __int__  # make indexing work
+
+    def __iadd__(self, other):
+        self.value += calc(other)
+        return self
+
+    def __isub__(self, other):
+        self.value -= calc(other)
+        return self
+
+    def __imul__(self, other):
+        self.value *= calc(other)
+        return self
+
+    def __ipow__(self, other):
+        self.value **= calc(other)
+        return self
+
+    def __itruediv__(self, other):
+        self.value //= calc(other)
+        return self
+
+    def __imod__(self, other):
+        self.value %= calc(other)
+        return self
+
+    def __irshift__(self, other):
+        self.value >>= calc(other)
+        return self
+
+    def __ilshift__(self, other):
+        self.value <<= calc(other)
+        return self
+
+    def __ixor__(self, other):
+        self.value ^= calc(other)
+        return self
+
+    def __iand__(self, other):
+        self.value &= calc(other)
+        return self
+
+    def __ior__(self, other):
+        self.value |= calc(other)
+        return self
+
+
+def create_immutable(val, type_):
+    class ImmutableWrapper(type_):
+        def __not_implemented__(self, _):
+            raise NotImplementedError
+
+        __iadd__ = __not_implemented__
+        __isub__ = __not_implemented__
+        __imul__ = __not_implemented__
+        __ipow__ = __not_implemented__
+        __itruediv__ = __not_implemented__
+        __imod__ = __not_implemented__
+        __irshift__ = __not_implemented__
+        __ilshift__ = __not_implemented__
+        __ior__ = __not_implemented__
+        __iand__ = __not_implemented__
+        __ixor__ = __not_implemented__
+
+    return ImmutableWrapper(val)
 
 
 class I8(WrappedCint, ctypes.c_int8):
@@ -245,3 +265,8 @@ SIGNED_INTS = (I8, I16, I32, I64)
 UNSIGNED_INTS = (U8, U16, U32, U64)
 
 INTS = SIGNED_INTS + UNSIGNED_INTS
+
+# fix/pin MIN/MAX values to be immutable (i.e. can't do U8.MIN += 2)
+for _type in INTS:
+    _type.MIN = create_immutable(_type.MIN, _type)
+    _type.MAX = create_immutable(_type.MAX, _type)

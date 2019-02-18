@@ -13,21 +13,24 @@ def test_abs(ct, val):
 
 
 @pytest.mark.parametrize('ct', SIGNED_INTS)
-def test_signed_minimum_value_arithmetics(ct):
+def test_min_signed_int_mul_minus_one(ct):
     min_ = ct.MIN
+    x = ct(min_)
 
     # MIN * -1
-    assert ct(min_) * -1 == -1 * ct(min_) == min_
+    assert x * -1 == -1 * x == min_
     assert min_ * ct(-1) == ct(-1) * min_ == min_
-    assert ct(-1) * ct(min_) == ct(min_) * ct(-1) == min_
+    assert ct(-1) * x == x * ct(-1) == min_
 
     # MIN / -1
-    assert  ct(min_) / -1 == min_
+    assert x / -1 == min_
     assert min_ / ct(-1) == min_
-    assert ct(min_) / ct(-1) == min_
+    assert x / ct(-1) == min_
 
-    # since ct.MIN is a Python int, the last abs returns a positive number
-    assert abs(ct(min_)) == min_ != abs(min_)
+    assert abs(x) == abs(min_) == min_
+
+    # negation with MIN
+    assert -x == x
 
 
 @pytest.mark.parametrize('ct', INTS)
@@ -98,3 +101,22 @@ def test_signed_vs_unsigned_comparisons(uint):
     assert (val > -1) is False
     assert (val < -1) is True
     assert (val == 1) is True
+
+
+@pytest.mark.parametrize('ct', INTS)
+@pytest.mark.parametrize('val', [-1, 0, 1])
+def test_neg(ct, val):
+    left = -ct(val)
+    right = ct(-val)
+    assert left.value == right.value
+    assert left == right
+
+
+@pytest.mark.parametrize('ct', INTS)
+@pytest.mark.parametrize('op', (iadd, isub, imul, itruediv, ipow, imod, ilshift, irshift, iand, ior, ixor))
+def test_immutable_min_max(ct, op):
+    with pytest.raises(NotImplementedError):
+        op(ct.MIN, 1)
+
+    with pytest.raises(NotImplementedError):
+        op(ct.MAX, 1)
