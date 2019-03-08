@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.com/disconnect3d/cint.svg?branch=master)](https://travis-ci.com/disconnect3d/cint)
 ## cint: make ctypes great again
 
 This is an attempt to wrap `ctypes.c_*` types so that the arithmetic operators works the same as in C, so:
