@@ -1,5 +1,4 @@
 import ctypes
-from builtins import super
 
 
 def calc(v):
@@ -9,9 +8,9 @@ def calc(v):
 class WrappedCint(object):
     def __init__(self, val):
         if isinstance(val, int):
-            super().__init__(val)
+            super(WrapperCint, self).__init__(val)
         elif isinstance(val, ctypes._SimpleCData):
-            super().__init__(val.value)
+            super(WrappedCint, self).__init__(val.value)
         else:
             raise ValueError("Wrong value passed to __init__")
 
