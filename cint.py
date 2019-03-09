@@ -1,11 +1,12 @@
 import ctypes
+from builtins import super
 
 
 def calc(v):
     return getattr(v, 'value', v)
 
 
-class WrappedCint:
+class WrappedCint(object):
     def __init__(self, val):
         if isinstance(val, int):
             super().__init__(val)
