@@ -8,7 +8,7 @@ def calc(v):
 class WrappedCint(object):
     def __init__(self, val):
         if isinstance(val, int):
-            super(WrapperCint, self).__init__(val)
+            super(WrappedCint, self).__init__(val)
         elif isinstance(val, ctypes._SimpleCData):
             super(WrappedCint, self).__init__(val.value)
         else:
