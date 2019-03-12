@@ -179,6 +179,9 @@ class WrappedCint(object):
 
 def create_immutable(val, type_):
     class ImmutableWrapper(type_):
+        def __init__(self, val):
+            super(ImmutableWrapper, self).__init__(val)
+
         def __not_implemented__(self, _):
             raise NotImplementedError
 
