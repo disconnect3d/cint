@@ -1,22 +1,29 @@
 import ctypes
+import sys
+
+# Py2/Py3 compatibility layer
+# I don't want to depend on e.g. `future` or `six`
+# just for this
+if sys.version_info.major == 3:
+    long = int
 
 
 def calc(v):
     return getattr(v, 'value', v)
 
 
-class WrappedCint:
+class WrappedCint(object):
     def __init__(self, val):
-        if isinstance(val, int):
-            super().__init__(val)
+        if isinstance(val, (int, long)):
+            super(WrappedCint, self).__init__(val)
         elif isinstance(val, ctypes._SimpleCData):
-            super().__init__(val.value)
+            super(WrappedCint, self).__init__(val.value)
         else:
             raise ValueError("Wrong value passed to __init__")
 
     @classmethod
     def __stronger_type(cls, other):
-        if isinstance(other, int):
+        if isinstance(other, (int, long)):
             return cls
         elif not isinstance(other, INTS):
             raise ValueError("Cannot perform arithmetic operations between %s and %s" % (cls, type(other)))
@@ -24,6 +31,10 @@ class WrappedCint:
         other = other.__class__
 
         return cls if (cls.SIZE, cls.UNSIGNED) > (other.SIZE, other.UNSIGNED) else other
+
+    if sys.version_info.major == 2:
+        def __coerce__(self, other):
+            return (self, self.__stronger_type(other)(calc(other)))
 
     def __add__(self, other):
         return self.__stronger_type(other)(self.value + calc(other))
@@ -50,8 +61,14 @@ class WrappedCint:
     def __truediv__(self, other):
         return self.__stronger_type(other)(self.value // calc(other))
 
+    # __div__ is Python 2 only
+    __div__ = __floordiv__ = __truediv__
+
     def __rtruediv__(self, other):
         return self.__stronger_type(other)(calc(other) // self.value)
+
+    # __rdiv__ is Python 2 only
+    __rdiv__ = __rfloordiv__ = __rtruediv__
 
     def __mod__(self, other):
         return self.__stronger_type(other)(self.value % calc(other))
@@ -147,6 +164,9 @@ class WrappedCint:
     def __itruediv__(self, other):
         return self.__class__(self.value // calc(other))
 
+    # __idiv__ is Python 2 only
+    __idiv__ = __ifloordiv__ = __itruediv__
+
     def __imod__(self, other):
         return self.__class__(self.value % calc(other))
 
@@ -176,6 +196,8 @@ def create_immutable(val, type_):
         __imul__ = __not_implemented__
         __ipow__ = __not_implemented__
         __itruediv__ = __not_implemented__
+        __ifloordiv__ = __not_implemented__
+        __idiv__ = __not_implemented__  # Python 2 only
         __imod__ = __not_implemented__
         __irshift__ = __not_implemented__
         __ilshift__ = __not_implemented__

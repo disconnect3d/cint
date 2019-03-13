@@ -3,6 +3,12 @@ from operator import (
     iadd, isub, imul, itruediv, ipow, imod, ilshift, irshift, iand, ior, ixor
 )
 
+# Py2/Py3 compatibility layer
+try:
+    from operator import ifloordiv
+except ImportError:
+    from operator import idiv as ifloordiv
+
 import pytest
 
 from cint import I8, U64, SIGNED_INTS, UNSIGNED_INTS, INTS
@@ -80,7 +86,7 @@ def test_alternative_operators_return_the_same_val(ct, op):
 
 
 @pytest.mark.parametrize('ct', INTS)
-@pytest.mark.parametrize('op', (iadd, isub, imul, itruediv, ipow, imod, ilshift, irshift, iand, ior, ixor))
+@pytest.mark.parametrize('op', (iadd, isub, imul, ifloordiv, itruediv, ipow, imod, ilshift, irshift, iand, ior, ixor))
 def test_inplace_operators_not_returning_other_type(ct, op):
     assert isinstance(op(ct(1), U64(1)), ct)
 
@@ -115,7 +121,7 @@ def test_neg(ct, val):
 
 
 @pytest.mark.parametrize('ct', INTS)
-@pytest.mark.parametrize('op', (iadd, isub, imul, itruediv, ipow, imod, ilshift, irshift, iand, ior, ixor))
+@pytest.mark.parametrize('op', (iadd, isub, imul, ifloordiv, itruediv, ipow, imod, ilshift, irshift, iand, ior, ixor))
 def test_immutable_min_max(ct, op):
     with pytest.raises(NotImplementedError):
         op(ct.MIN, 1)
@@ -124,7 +130,7 @@ def test_immutable_min_max(ct, op):
         op(ct.MAX, 1)
 
 @pytest.mark.parametrize('ct', INTS)
-@pytest.mark.parametrize('op', (iadd, isub, imul, itruediv, ipow, imod, ilshift, irshift, iand, ior, ixor))
+@pytest.mark.parametrize('op', (iadd, isub, imul, ifloordiv, itruediv, ipow, imod, ilshift, irshift, iand, ior, ixor))
 def test_not_mutable_ioperators(ct, op):
     x = ct(100)
     y = ct(10)
