@@ -122,3 +122,21 @@ def test_immutable_min_max(ct, op):
 
     with pytest.raises(NotImplementedError):
         op(ct.MAX, 1)
+
+@pytest.mark.parametrize('ct', INTS)
+@pytest.mark.parametrize('op', (iadd, isub, imul, itruediv, ipow, imod, ilshift, irshift, iand, ior, ixor))
+def test_not_mutable_ioperators(ct, op):
+    x = ct(100)
+    y = ct(10)
+
+    result = op(x, y)
+
+    # Just in case, check the value ;)
+    expected_result = ct(int(op(100, 10)))
+    assert result == expected_result
+
+    # Check for mutability - the: `x <op>= y` should not modify x
+    assert x == 100
+    assert y == 10
+    assert id(x) != id(result) != id(y)
+
