@@ -133,48 +133,37 @@ class WrappedCint:
     __index__ = __int__  # make indexing work
 
     def __iadd__(self, other):
-        self.value += calc(other)
-        return self
+        return self.__class__(self.value + calc(other))
 
     def __isub__(self, other):
-        self.value -= calc(other)
-        return self
+        return self.__class__(self.value - calc(other))
 
     def __imul__(self, other):
-        self.value *= calc(other)
-        return self
+        return self.__class__(self.value * calc(other))
 
     def __ipow__(self, other):
-        self.value **= calc(other)
-        return self
+        return self.__class__(self.value ** calc(other))
 
     def __itruediv__(self, other):
-        self.value //= calc(other)
-        return self
+        return self.__class__(self.value // calc(other))
 
     def __imod__(self, other):
-        self.value %= calc(other)
-        return self
+        return self.__class__(self.value % calc(other))
 
     def __irshift__(self, other):
-        self.value >>= calc(other)
-        return self
+        return self.__class__(self.value >> calc(other))
 
     def __ilshift__(self, other):
-        self.value <<= calc(other)
-        return self
+        return self.__class__(self.value << calc(other))
 
     def __ixor__(self, other):
-        self.value ^= calc(other)
-        return self
+        return self.__class__(self.value ^ calc(other))
 
     def __iand__(self, other):
-        self.value &= calc(other)
-        return self
+        return self.__class__(self.value & calc(other))
 
     def __ior__(self, other):
-        self.value |= calc(other)
-        return self
+        return self.__class__(self.value | calc(other))
 
 
 def create_immutable(val, type_):
