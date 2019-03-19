@@ -8,7 +8,7 @@ setup(
     author='disconnect3d',
     author_email='dominik.b.czarnota+cint@gmail.com',
     packages=find_packages(),
-    python_requires='>=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*',
+    python_requires='>=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,<4',
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'License :: OSI Approved :: MIT License',
