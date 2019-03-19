@@ -20,7 +20,7 @@ def rand_gen(seed):
         seed = 1103515245 * seed + 12345
         yield seed
 
-# a simple I32 range rand
+# a simple I32 and U64 random number generators
 rand_i32 = rand_gen(I32(1))
 rand_u64 = rand_gen(U64(2))
 
