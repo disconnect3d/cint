@@ -25,7 +25,7 @@ rand_i32 = rand_gen(I32(1))
 rand_u64 = rand_gen(U64(2))
 
 for i in range(10):
-    print("Gen %d number: i32 = %d, u64 = %d" % (rand_i32(), rand_u64()))
+    print("Gen %d number: i32 = %d, u64 = %d" % (next(rand_i32()), next(rand_u64())))
 
 # We can do simple overflows
 print("I8(127) + 1 = %d" % (I8(127) + 1))
@@ -33,6 +33,10 @@ print("I8(127) + 1 = %d" % (I8(127) + 1))
 # Some other 'weird' cases are also handled - see tests for more! ;)
 print("-1 * I8(-128) = %d" % (-1 * I8(-128)))
 print("abs(I32.MIN) = %d" % abs(I32.MIN))
+
+# Adding numbers of two different types will result in bigger type result
+x = I32(1) + U64(2)
+print("x = %r" % x)  # U64(3)
 
 # There are also .MIN and .MAX constants
 print("U64 min value = %d, max value = %d" % (U64.MIN, U64.MAX))
