@@ -13,13 +13,12 @@ This is a wrapper for `ctypes.c_*` types so that the arithmetic operators works 
 from cint import I8, I32, U64, Cint
 
 def rand_gen(seed):
+    """Returns a rng that generates numbers in a range of given cint type"""
     assert isinstance(seed, Cint)
-    seed = I32(seed)
-    def _rand():
-        nonlocal seed
+
+    while True:
         seed = 1103515245 * seed + 12345
-        return seed
-    return _rand
+        yield seed
 
 # a simple I32 range rand
 rand_i32 = rand_gen(I32(1))
