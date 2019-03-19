@@ -25,7 +25,7 @@ rand_i32 = rand_gen(I32(1))
 rand_u64 = rand_gen(U64(2))
 
 for i in range(10):
-    print("Gen %d number: i32 = %d, u64 = %d" % (next(rand_i32()), next(rand_u64())))
+    print("Gen %d number: i32 = %d, u64 = %d" % (i, next(rand_i32), next(rand_u64)))
 
 # We can do simple overflows
 print("I8(127) + 1 = %d" % (I8(127) + 1))
