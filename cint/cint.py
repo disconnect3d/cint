@@ -186,8 +186,11 @@ class Cint(object):
         return self.__class__(self.value | calc(other))
 
 
+class ImmutableCint(object):
+    pass
+
 def create_immutable(val, type_):
-    class ImmutableWrapper(type_):
+    class ImmutableCintX(type_, ImmutableCint):
         def __not_implemented__(self, _):
             raise NotImplementedError
 
@@ -205,7 +208,7 @@ def create_immutable(val, type_):
         __iand__ = __not_implemented__
         __ixor__ = __not_implemented__
 
-    return ImmutableWrapper(val)
+    return ImmutableCintX(val)
 
 
 class I8(Cint, ctypes.c_int8):
