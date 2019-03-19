@@ -12,12 +12,12 @@ def calc(v):
     return getattr(v, 'value', v)
 
 
-class WrappedCint(object):
+class Cint(object):
     def __init__(self, val):
         if isinstance(val, (int, long)):
-            super(WrappedCint, self).__init__(val)
+            super(Cint, self).__init__(val)
         elif isinstance(val, ctypes._SimpleCData):
-            super(WrappedCint, self).__init__(val.value)
+            super(Cint, self).__init__(val.value)
         else:
             raise ValueError("Wrong value passed to __init__")
 
@@ -208,7 +208,7 @@ def create_immutable(val, type_):
     return ImmutableWrapper(val)
 
 
-class I8(WrappedCint, ctypes.c_int8):
+class I8(Cint, ctypes.c_int8):
     MIN = -2 ** 7
     MAX = 2 ** 7 - 1
     UNSIGNED = False
@@ -216,7 +216,7 @@ class I8(WrappedCint, ctypes.c_int8):
     SIZE = 1
 
 
-class I16(WrappedCint, ctypes.c_int16):
+class I16(Cint, ctypes.c_int16):
     MIN = -2 ** 15
     MAX = 2 ** 15 - 1
     UNSIGNED = False
@@ -224,7 +224,7 @@ class I16(WrappedCint, ctypes.c_int16):
     SIZE = 2
 
 
-class I32(WrappedCint, ctypes.c_int32):
+class I32(Cint, ctypes.c_int32):
     MIN = -2 ** 31
     MAX = 2 ** 31 - 1
     UNSIGNED = False
@@ -232,7 +232,7 @@ class I32(WrappedCint, ctypes.c_int32):
     SIZE = 4
 
 
-class I64(WrappedCint, ctypes.c_int64):
+class I64(Cint, ctypes.c_int64):
     MIN = -2 ** 63
     MAX = 2 ** 63 - 1
     UNSIGNED = False
@@ -240,7 +240,7 @@ class I64(WrappedCint, ctypes.c_int64):
     SIZE = 8
 
 
-class U8(WrappedCint, ctypes.c_uint8):
+class U8(Cint, ctypes.c_uint8):
     MIN = 0
     MAX = 2 ** 8 - 1
     UNSIGNED = True
@@ -248,7 +248,7 @@ class U8(WrappedCint, ctypes.c_uint8):
     SIZE = 1
 
 
-class U16(WrappedCint, ctypes.c_uint16):
+class U16(Cint, ctypes.c_uint16):
     MIN = 0
     MAX = 2 ** 16 - 1
     UNSIGNED = True
@@ -256,7 +256,7 @@ class U16(WrappedCint, ctypes.c_uint16):
     SIZE = 2
 
 
-class U32(WrappedCint, ctypes.c_uint32):
+class U32(Cint, ctypes.c_uint32):
     MIN = 0
     MAX = 2 ** 32 - 1
     UNSIGNED = True
@@ -264,7 +264,7 @@ class U32(WrappedCint, ctypes.c_uint32):
     SIZE = 4
 
 
-class U64(WrappedCint, ctypes.c_uint64):
+class U64(Cint, ctypes.c_uint64):
     MIN = 0
     MAX = 2 ** 64 - 1
     UNSIGNED = True
