@@ -8,5 +8,7 @@ python:
   - "pypy3.5"
 install:
   - pip install -r tests/requirements.txt
+  - pip install pytype
 script:
   - pytest -v
+  - pytype --python-version $TRAVIS_PYTHON_VERSION

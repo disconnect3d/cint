@@ -117,3 +117,6 @@ dmypy.json
 
 # PyCharm project dir
 .idea/
+
+# pytype static analysis
+/pytype_output/
