@@ -7,17 +7,18 @@ python:
   - "nightly"
   - "pypy3.5"
 
+stages:
+  - test
+  - analysis
+
+install:
+  - pip install -r tests/requirements.txt
+script:
+  - pytest -v
+
 jobs:
   include:
-    - stage: "Tests"
-
-      name: "Unit tests"
-      install:
-        - pip install -r tests/requirements.txt
-      script:
-        - pytest -v
-
-      name: "Static analysis"
+    - stage: analysis
       install:
         - pip install -r tests/requirements.txt
         - pip install pytype
