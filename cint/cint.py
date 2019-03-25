@@ -21,6 +21,41 @@ class Cint(object):
         else:
             raise ValueError("Wrong value passed to __init__")
 
+    # Methods from ctypes._CData - we override them so that they are visible in `dir(obj)`
+    # in theory we could just override  `__dir__` but that wouldn't show up them in `dir(cint_type)`
+    # a good thing about it is that we can make better docs
+    @classmethod
+    def from_buffer(cls, source, offset=0):
+        """
+        Creates a Cint instance from a writeable `source` buffer.
+
+        Note that the resulting object will just hold a pointer to the buffer
+        and *it does not manage the lifetime of that buffer* so you must explicitly
+        make sure that it doesn't go out of scope or you will end up with undefined behavior.
+        """
+        return cls.from_buffer(source, offset)
+
+
+    @classmethod
+    def from_buffer_copy(cls, source, offset=0):
+        """
+        Creates a Cint instance from a readable `source` buffer.
+
+        The buffer object is copied and managed by the Cint instance.
+        """
+        return cls.from_buffer_copy(source, offset)
+
+    @classmethod
+    def from_address(cls, address):
+        """
+        Creates a Cint instance from a given `address` (integer).
+
+        Note that the resulting object won't manage the lifetime of the underlying memory.
+        See also docs for `from_buffer`.
+        """
+        return cls.from_address(address)
+
+    # Cint details below
     @classmethod
     def __stronger_type(cls, other):
         if isinstance(other, (int, long)):
