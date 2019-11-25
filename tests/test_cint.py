@@ -56,6 +56,9 @@ def test_overflows_and_underflows(ct):
 
     if ct.UNSIGNED:
         assert ct.MIN == 0
+    else:
+        assert ct.MIN < 0
+    assert ct.MAX > 0
 
 
 @pytest.mark.parametrize('ct', INTS)
