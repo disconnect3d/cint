@@ -221,31 +221,6 @@ class Cint(object):
         return self.__class__(self.value | calc(other))
 
 
-class ImmutableCint(object):
-    pass
-
-def create_immutable(val, type_):
-    class ImmutableCintX(type_, ImmutableCint):
-        def __not_implemented__(self, _):
-            raise NotImplementedError
-
-        __iadd__ = __not_implemented__
-        __isub__ = __not_implemented__
-        __imul__ = __not_implemented__
-        __ipow__ = __not_implemented__
-        __itruediv__ = __not_implemented__
-        __ifloordiv__ = __not_implemented__
-        __idiv__ = __not_implemented__  # Python 2 only
-        __imod__ = __not_implemented__
-        __irshift__ = __not_implemented__
-        __ilshift__ = __not_implemented__
-        __ior__ = __not_implemented__
-        __iand__ = __not_implemented__
-        __ixor__ = __not_implemented__
-
-    return ImmutableCintX(val)
-
-
 class I8(Cint, ctypes.c_int8):
     MIN = -2 ** 7
     MAX = 2 ** 7 - 1
@@ -315,7 +290,7 @@ UNSIGNED_INTS = (U8, U16, U32, U64)
 
 INTS = SIGNED_INTS + UNSIGNED_INTS
 
-# fix/pin MIN/MAX values to be immutable (i.e. can't do U8.MIN += 2)
+# fix MIN/MAX values to have proper type
 for _type in INTS:
-    _type.MIN = create_immutable(_type.MIN, _type)
-    _type.MAX = create_immutable(_type.MAX, _type)
+    _type.MIN = _type(_type.MIN)
+    _type.MAX = _type(_type.MAX)

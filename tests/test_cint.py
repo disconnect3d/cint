@@ -122,15 +122,6 @@ def test_neg(ct, val):
 
 @pytest.mark.parametrize('ct', INTS)
 @pytest.mark.parametrize('op', (iadd, isub, imul, ifloordiv, itruediv, ipow, imod, ilshift, irshift, iand, ior, ixor))
-def test_immutable_min_max(ct, op):
-    with pytest.raises(NotImplementedError):
-        op(ct.MIN, 1)
-
-    with pytest.raises(NotImplementedError):
-        op(ct.MAX, 1)
-
-@pytest.mark.parametrize('ct', INTS)
-@pytest.mark.parametrize('op', (iadd, isub, imul, ifloordiv, itruediv, ipow, imod, ilshift, irshift, iand, ior, ixor))
 def test_not_mutable_ioperators(ct, op):
     x = ct(100)
     y = ct(10)
