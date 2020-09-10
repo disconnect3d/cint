@@ -17,14 +17,14 @@ Imagine a C program returns a value you suspect to be a leak of a pointer addres
 
 You can convert it to a more-readable-hex form by using `c_void_p` from `ctypes` as in:
 
-```
+```python
 In [2]: hex(cast(-1702577226, c_void_p).value)
 Out[2]: '0xffffffff9a84bbb6'
 ```
 
 Or, you could just use `cint`:
 
-```
+```python
 In [3]: hex(cint.U64(-1702577226))
 Out[3]: '0xffffffff9a84bbb6'
 ```
@@ -56,7 +56,7 @@ for i in range(10):
 
 This example just shows some "weird" examples that you would not expect from normal Python integers
 
-```
+```python
 from cint import I8, I32, U64, Cint
 
 # We can do simple overflows
