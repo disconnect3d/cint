@@ -50,6 +50,14 @@ rand_u64 = rand_gen(U64(2))
 
 for i in range(10):
     print("Gen %d number: i32 = %d, u64 = %d" % (i, next(rand_i32), next(rand_u64)))
+```
+
+### Example 3
+
+This example just shows some "weird" examples that you would not expect from normal Python integers
+
+```
+from cint import I8, I32, U64, Cint
 
 # We can do simple overflows
 print("I8(127) + 1 = %d" % (I8(127) + 1))
