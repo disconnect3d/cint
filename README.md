@@ -7,7 +7,31 @@ This is a wrapper for `ctypes.c_*` types so that the arithmetic operators works 
 
 **Install with `pip install cint`! Supports both Python 2 and Python 3.**
 
-### Examples
+### Why this lib?
+
+Sometimes you just need the old, low level behavior of int/unsigned types. This may be handy during reverse engineering and rewritting some C code to Python.
+
+### Example 1
+
+Imagine a C program returns a value you suspect to be a leak of a pointer address and its returned to you as int64 e.g. `-1702577226`.
+
+You can convert it to a more-readable-hex form by using `c_void_p` from `ctypes` as in:
+
+```
+In [2]: hex(cast(-1702577226, c_void_p).value)
+Out[2]: '0xffffffff9a84bbb6'
+```
+
+Or, you could just use `cint`:
+
+```
+In [3]: hex(cint.U64(-1702577226))
+Out[3]: '0xffffffff9a84bbb6'
+```
+
+### Example 2
+
+`cint` can also be used to reimplemented a rng algorithm from C code or a reverse engineered program. This could look as:
 
 ```python
 from cint import I8, I32, U64, Cint
@@ -42,6 +66,3 @@ print("x = %r" % x)  # U64(3)
 print("U64 min value = %d, max value = %d" % (U64.MIN, U64.MAX))
 ```
 
-### Why this lib?
-
-Sometimes you just need the old, low level behavior of int/unsigned types. This may be handy during reverse engineering and rewritting some C code to Python.
