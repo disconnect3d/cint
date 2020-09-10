@@ -9,7 +9,7 @@ This is a wrapper for `ctypes.c_*` types so that the arithmetic operators works 
 
 ### Why this lib?
 
-Sometimes you just need the old, low level behavior of int/unsigned types. This may be handy during reverse engineering and rewritting some C code to Python.
+Sometimes you just need the old, low level behavior of int/unsigned types. This may be handy during reverse engineering or rewritting C code to Python and persisting their integer arithmetics behavior.
 
 ### Example 1
 
