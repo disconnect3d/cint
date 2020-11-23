@@ -140,3 +140,25 @@ def test_not_mutable_ioperators(ct, op):
     assert y == 10
     assert id(x) != id(result) != id(y)
 
+
+@pytest.mark.parametrize('ct', SIGNED_INTS)
+def test_invert_signed(ct):
+    x = ct(0)
+    y = ct(-1)
+    inv_x = ~x
+    inv_y = ~y
+    assert inv_x != x and inv_y != y
+    assert inv_x == y
+    assert x == inv_y
+
+
+@pytest.mark.parametrize('ct', UNSIGNED_INTS)
+def test_invert_unsigned(ct):
+    x = ct(0)
+    y = ct.MAX
+    inv_x = ~x
+    inv_y = ~y
+    assert inv_x != x and inv_y != y
+    assert inv_x == y
+    assert x == inv_y
+

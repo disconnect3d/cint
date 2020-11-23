@@ -220,6 +220,9 @@ class Cint(object):
     def __ior__(self, other):
         return self.__class__(self.value | calc(other))
 
+    def __invert__(self):
+        return self.__class__(~self.value)
+
 
 class I8(Cint, ctypes.c_int8):
     MIN = -2 ** 7
