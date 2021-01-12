@@ -31,7 +31,7 @@ Out[3]: '0xffffffff9a84bbb6'
 
 ### Example 2
 
-`cint` can also be used to reimplemented a rng algorithm from C code or a reverse engineered program. This could look as:
+`cint` can also be used to reimplement a rng algorithm from C code or a reverse engineered program. This could look as:
 
 ```python
 from cint import I8, I32, U64, Cint
