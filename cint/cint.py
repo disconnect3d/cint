@@ -156,20 +156,8 @@ class Cint(object):
     def __rxor__(self, other):
         return self.__stronger_type(other)(calc(other) ^ self.value)
 
-    def __int__(self):
-        return int(self.value)
-
-    def __float__(self):
-        return float(self.value)
-
     def __bool__(self):
         return self.value != 0
-
-    def __abs__(self):
-        return self.__class__(abs(self.value))
-
-    def __neg__(self):
-        return self.__class__(-self.value)
 
     def __hash__(self):
         # returning `hash(self.value)` would be **bug prone**
@@ -181,8 +169,6 @@ class Cint(object):
 
     def __repr__(self):
         return '{}({})'.format(self.__class__.__name__, self.value)
-
-    __index__ = __int__  # make indexing work
 
     def __iadd__(self, other):
         return self.__class__(self.value + calc(other))
@@ -220,8 +206,30 @@ class Cint(object):
     def __ior__(self, other):
         return self.__class__(self.value | calc(other))
 
+    def __neg__(self):
+        return self.__class__(-self.value)
+
+    def __pos__(self):
+        return self.__class__(self.value)
+
+    def __abs__(self):
+        return self.__class__(abs(self.value))
+
     def __invert__(self):
         return self.__class__(~self.value)
+
+    def __complex__(self):
+        return complex(self.value)
+
+    def __int__(self):
+        return int(self.value)
+
+    def __float__(self):
+        return float(self.value)
+
+    __index__ = __int__  # make indexing work
+
+
 
 
 class I8(Cint, ctypes.c_int8):
