@@ -2,10 +2,12 @@
 ## cint: make ctypes great again
 
 This is a wrapper for `ctypes.c_*` types so that the arithmetic operators works the same as in C, so:
-- value overflow/underflow may occur (yeah, I know that unsigned overflows are UB in C but they _usually_ work)
+- value overflow/underflow may occur (yeah, integer overflows are UB in C but they _usually_ work)
 - when making calculations of two different cint types, the result type will be of bigger or/and unsigned type
 
 **Install with `pip install cint`! Supports both Python 2 and Python 3.**
+
+### TL;DR - show me an example
 
 ```python
 In [1]: x = cint.I8(127)
@@ -29,7 +31,7 @@ Sometimes you just need the old, low level behavior of int/unsigned types. This 
 
 ### Example 1
 
-Imagine a C program returns a value you suspect to be a leak of a pointer address and its returned to you as int64 e.g. `-1702577226`.
+Imagine a C program returns a value you suspect to be a leak of a kernel pointer address and its returned to you as int64 e.g. `-1702577226`.
 
 You can convert it to a more-readable-hex form by using `c_void_p` from `ctypes` as in:
 
@@ -38,7 +40,7 @@ In [2]: hex(cast(-1702577226, c_void_p).value)
 Out[2]: '0xffffffff9a84bbb6'
 ```
 
-Or, you could just use `cint`:
+`cint` makes it simpler:
 
 ```python
 In [3]: hex(cint.U64(-1702577226))
@@ -47,7 +49,7 @@ Out[3]: '0xffffffff9a84bbb6'
 
 ### Example 2
 
-`cint` can also be used to reimplement a rng algorithm from C code or a reverse engineered program. This could look as:
+`cint` can also be used to reimplement a RNG algorithm from C code or a reverse engineered program. This could look as:
 
 ```python
 from cint import I8, I32, U64, Cint
