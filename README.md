@@ -7,7 +7,7 @@ This is a wrapper for `ctypes.c_*` types so that the arithmetic operators works 
 
 **Install with `pip install cint`! Supports both Python 2 and Python 3.**
 
-```
+```python
 In [1]: x = cint.I8(127)
 
 # Values will overflow as in C
