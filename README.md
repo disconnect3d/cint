@@ -7,6 +7,22 @@ This is a wrapper for `ctypes.c_*` types so that the arithmetic operators works 
 
 **Install with `pip install cint`! Supports both Python 2 and Python 3.**
 
+```
+In [1]: x = cint.I8(127)
+
+# Values will overflow as in C
+In [2]: x + 1
+Out[2]: I8(-128)
+
+# They will also implicitly convert to the bigger/unsigned type when calculated together
+In [3]: x + cint.U16(1)
+Out[3]: U16(128)
+
+# And of course, overflow on construction as well
+In [4]: cint.I8(255)
+Out[4]: I8(-1)
+```
+
 ### Why this lib?
 
 Sometimes you just need the old, low level behavior of int/unsigned types. This may be handy during reverse engineering or rewritting C code to Python and persisting their integer arithmetics behavior.
