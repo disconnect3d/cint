@@ -308,11 +308,16 @@ class U64(Cint, ctypes.c_uint64):
 
 class F32(Cint, ctypes.c_float):
     # MIN/MAX are not defined for floats
+    # Update: well, maybe they are definded after all
+    MIN = 2 ** -126
+    MAX = (2 - 2 ** -23) * 2 ** 127
     UNSIGNED = False
     CTYPEDEF = 'float'
-    SIZE = 4
+    SIZE = 4    
 
 class F64(Cint, ctypes.c_double):
+    MIN = 2 ** -1022
+    MAX = (2 - 2 ** -52) * 2 ** 1023
     UNSIGNED = False
     CTYPEDEF = 'double'
     SIZE = 8
@@ -328,9 +333,5 @@ TYPES = INTS + FLOATS
 
 # fix MIN/MAX values to have proper type
 for _type in TYPES:
-    if hasattr(_type, 'MIN'):
-        _type.MIN = _type(_type.MIN)
-    if hasattr(_type, 'MAX'):
-        _type.MAX = _type(_type.MAX)
-
-
+    _type.MIN = _type(_type.MIN)
+    _type.MAX = _type(_type.MAX)

@@ -11,8 +11,9 @@ except ImportError:
     from operator import idiv as ifloordiv
 
 import pytest
+import math
 
-from cint import I8, U64, F64, SIGNED_INTS, UNSIGNED_INTS, INTS, FLOATS, SIGNED_TYPES, TYPES
+from cint import I8, U64, F32, F64, SIGNED_INTS, UNSIGNED_INTS, INTS, FLOATS, SIGNED_TYPES, TYPES
 
 
 @pytest.mark.parametrize('ct', SIGNED_TYPES)
@@ -212,3 +213,32 @@ def test_invalid_operators_on_floats(ct, op):
         op(ct(1), I8(1))    
     with pytest.raises(TypeError):
         op(I8(1), ct(1))
+
+@pytest.mark.parametrize('ct', FLOATS)
+def test_int_from_float_conversion(ct):
+    x = ct(1.0)
+    assert int(x) == 1
+    assert ct(int(x)) == x
+
+
+@pytest.mark.parametrize('ct', FLOATS)
+def test_inf_and_nan_values(ct):
+    inf = float('inf')
+    nan = float('nan')
+    a = ct(inf)
+    b = ct(nan)
+
+    assert a == inf and math.isinf(a) and a == a
+    assert -a == -inf and math.isinf(-a) and -a == -a
+    assert b != b and math.isnan(b)
+
+# TODO make this functionality available in the library
+def _test_binary_representation_of_nan_and_inf():
+    # https://en.wikipedia.org/wiki/IEEE_754#Character_representation
+    # 9 decimal digits for binary32,
+    # 17 decimal digits for binary64
+    assert bin(F32(float('nan'))) == "0b01111111110000000000000000000000"
+    assert bin(F32(float('inf'))) == "0b01111111100000000000000000000000"
+
+    assert bin(F64(float('nan'))) == "0b0111111111111000000000000000000000000000000000000000000000000000"
+    assert bin(F64(float('inf'))) == "0b0111111111110000000000000000000000000000000000000000000000000000"
