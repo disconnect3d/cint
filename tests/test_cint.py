@@ -3,6 +3,7 @@ from operator import (
     iadd, isub, imul, itruediv, ipow, imod, ilshift, irshift, iand, ior, ixor
 )
 
+
 # Py2/Py3 compatibility layer
 try:
     from operator import ifloordiv
@@ -11,16 +12,16 @@ except ImportError:
 
 import pytest
 
-from cint import I8, U64, SIGNED_INTS, UNSIGNED_INTS, INTS
+from cint import I8, U64, F64, SIGNED_INTS, UNSIGNED_INTS, INTS, FLOATS, SIGNED_TYPES, TYPES
 
 
-@pytest.mark.parametrize('ct', SIGNED_INTS)
+@pytest.mark.parametrize('ct', SIGNED_TYPES)
 @pytest.mark.parametrize('val', (-1, 0, 1))
 def test_abs(ct, val):
     assert abs(ct(val)) == abs(val)
 
 
-@pytest.mark.parametrize('ct', SIGNED_INTS)
+@pytest.mark.parametrize('ct', INTS)
 def test_min_signed_int_mul_minus_one(ct):
     min_ = ct.MIN
     x = ct(min_)
@@ -42,7 +43,7 @@ def test_min_signed_int_mul_minus_one(ct):
 
 
 @pytest.mark.parametrize('ct', INTS)
-def test_overflows_and_underflows(ct):
+def test_ints_overflows_and_underflows(ct):
     min_ = ct.MIN
     max_ = ct.MAX
 
@@ -61,7 +62,7 @@ def test_overflows_and_underflows(ct):
     assert ct.MAX > 0
 
 
-@pytest.mark.parametrize('ct', INTS)
+@pytest.mark.parametrize('ct', TYPES)
 def test_operators(ct):
     x = 1
     assert x + ct(x) == ct(2 * x) == 2 * x == ct(x) + x
@@ -69,7 +70,7 @@ def test_operators(ct):
 
 @pytest.mark.parametrize('ct', INTS)
 @pytest.mark.parametrize('op', (add, sub, mul, truediv, pow, mod, lshift, rshift, and_, or_, xor))
-def test_implicit_casts_when_different_types_are_used(ct, op):
+def test_implicit_casts_when_different_types_are_used_for_ints(ct, op):
     # The U64 is the *strongest* type, so operations with it should always return it
     assert isinstance(op(ct(1), U64(1)), U64)
     assert isinstance(op(U64(1), ct(1)), U64)
@@ -79,9 +80,29 @@ def test_implicit_casts_when_different_types_are_used(ct, op):
     assert isinstance(op(I8(1), ct(1)), ct)
 
 
+@pytest.mark.parametrize('ct', TYPES)
+@pytest.mark.parametrize('op', (add, sub, mul, truediv, pow))
+def test_implicit_casts_when_different_types_are_used_for_all_types(ct, op):
+    # Now F64 is the *strongest* type
+    assert isinstance(op(ct(1), F64(1)), F64)
+    assert isinstance(op(F64(1), ct(1)), F64)
+
+    # The I8 is still the weakest type
+    assert isinstance(op(ct(1), I8(1)), ct)
+    assert isinstance(op(I8(1), ct(1)), ct)
+
+
 @pytest.mark.parametrize('ct', INTS)
 @pytest.mark.parametrize('op', (add, mul, and_, or_, xor))
-def test_alternative_operators_return_the_same_val(ct, op):
+def test_alternative_operators_return_the_same_val_for_ints(ct, op):
+    left = op(ct(4), 3)
+    right = op(3, ct(4))
+
+    assert left == right and left.value == right.value
+
+@pytest.mark.parametrize('ct', TYPES)
+@pytest.mark.parametrize('op', (add, mul))
+def test_alternative_operators_return_the_same_val_for_all_types(ct, op):
     left = op(ct(4), 3)
     right = op(3, ct(4))
 
@@ -90,9 +111,13 @@ def test_alternative_operators_return_the_same_val(ct, op):
 
 @pytest.mark.parametrize('ct', INTS)
 @pytest.mark.parametrize('op', (iadd, isub, imul, ifloordiv, itruediv, ipow, imod, ilshift, irshift, iand, ior, ixor))
-def test_inplace_operators_not_returning_other_type(ct, op):
+def test_inplace_operators_not_returning_other_type_for_ints(ct, op):
     assert isinstance(op(ct(1), U64(1)), ct)
 
+@pytest.mark.parametrize('ct', INTS)
+@pytest.mark.parametrize('op', (iadd, isub, imul, ifloordiv, itruediv, ipow))
+def test_inplace_operators_not_returning_other_type_for_all_types(ct, op):
+    assert isinstance(op(ct(1), U64(1)), ct)
 
 @pytest.mark.parametrize('uint', UNSIGNED_INTS)
 def test_signed_vs_unsigned_comparisons(uint):
@@ -114,7 +139,7 @@ def test_signed_vs_unsigned_comparisons(uint):
     assert (val == 1) is True
 
 
-@pytest.mark.parametrize('ct', INTS)
+@pytest.mark.parametrize('ct', TYPES)
 @pytest.mark.parametrize('val', [-1, 0, 1])
 def test_neg(ct, val):
     left = -ct(val)
@@ -125,7 +150,7 @@ def test_neg(ct, val):
 
 @pytest.mark.parametrize('ct', INTS)
 @pytest.mark.parametrize('op', (iadd, isub, imul, ifloordiv, itruediv, ipow, imod, ilshift, irshift, iand, ior, ixor))
-def test_not_mutable_ioperators(ct, op):
+def test_not_mutable_ioperators_for_ints(ct, op):
     x = ct(100)
     y = ct(10)
 
@@ -140,6 +165,21 @@ def test_not_mutable_ioperators(ct, op):
     assert y == 10
     assert id(x) != id(result) != id(y)
 
+
+@pytest.mark.parametrize('ct', TYPES)
+@pytest.mark.parametrize('op', (iadd, isub, imul, ifloordiv, itruediv, ipow))
+def test_not_mutable_ioperators_for_all_types(ct, op):
+    x = ct(100)
+    y = ct(10)
+
+    result = op(x, y)
+
+    expected_result = ct(int(op(100, 10)))
+    assert result == expected_result
+
+    assert x == 100
+    assert y == 10
+    assert id(x) != id(result) != id(y)
 
 @pytest.mark.parametrize('ct', SIGNED_INTS)
 def test_invert_signed(ct):
@@ -162,3 +202,13 @@ def test_invert_unsigned(ct):
     assert inv_x == y
     assert x == inv_y
 
+
+@pytest.mark.parametrize('ct', FLOATS)
+@pytest.mark.parametrize('op', (mod, lshift, rshift, and_, or_, xor, imod, ilshift, irshift, iand, ior, ixor))
+def test_invalid_operators_on_floats(ct, op):
+    with pytest.raises(TypeError):
+        op(ct(1), ct(1))
+    with pytest.raises(TypeError):
+        op(ct(1), I8(1))    
+    with pytest.raises(TypeError):
+        op(I8(1), ct(1))
