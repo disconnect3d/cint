@@ -19,6 +19,13 @@ class Cint(object):
             super(Cint, self).__init__(val)
         elif isinstance(val, ctypes._SimpleCData):
             super(Cint, self).__init__(val.value)
+        elif isinstance(val, str):
+            if val.lower() == "nan":
+                super(Cint, self).__init__(float('nan'))
+            elif val.lower() == "inf":
+                super(Cint, self).__init__(float('inf'))
+            elif val.lower() == "-inf":
+                super(Cint, self).__init__(float('-inf'))
         else:
             raise ValueError("Wrong value passed to __init__")
 

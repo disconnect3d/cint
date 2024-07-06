@@ -223,13 +223,11 @@ def test_int_from_float_conversion(ct):
 
 @pytest.mark.parametrize('ct', FLOATS)
 def test_inf_and_nan_values(ct):
-    inf = float('inf')
-    nan = float('nan')
-    a = ct(inf)
-    b = ct(nan)
+    a = ct("inf")
+    b = ct("nan")
 
-    assert a == inf and math.isinf(a) and a == a
-    assert -a == -inf and math.isinf(-a) and -a == -a
+    assert a == float("inf") and math.isinf(a) and a == a
+    assert -a == -float("inf") and math.isinf(-a) and -a == -a
     assert b != b and math.isnan(b)
 
 # TODO make this functionality available in the library
