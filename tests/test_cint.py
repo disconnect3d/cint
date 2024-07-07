@@ -230,13 +230,37 @@ def test_inf_and_nan_values(ct):
     assert -a == -float("inf") and math.isinf(-a) and -a == -a
     assert b != b and math.isnan(b)
 
+@pytest.mark.parametrize('ct', FLOATS)
+@pytest.mark.parametrize('op', (add, sub, mul, truediv, pow))
+def test_inf_and_nan_values_in_operations(ct, op):
+    inf = ct("inf")
+    nan = ct("nan")
+    
+    math.isinf(op(inf, 1))
+    assert math.isinf(op(inf, 1))
+    assert math.isnan(op(nan, 1)) 
+    assert math.isnan(op(2, nan))
+    assert nan ** 0 == 1 ** nan == 1
+
+    assert math.isnan(op(nan, inf))
+    assert math.isnan(op(inf, nan))
+    
+    assert math.isnan(inf / inf)
+    assert math.isnan(inf / -inf)
+    assert math.isnan(inf * 0)
+    assert math.isnan(inf - inf)
+
+    assert math.isinf(op(inf, inf)) or op in (truediv, sub)
+    assert math.isinf(op(inf, -inf)) or op in (truediv, add, pow)
+    
+
 # TODO make this functionality available in the library
 def _test_binary_representation_of_nan_and_inf():
     # https://en.wikipedia.org/wiki/IEEE_754#Character_representation
     # 9 decimal digits for binary32,
     # 17 decimal digits for binary64
-    assert bin(F32(float('nan'))) == "0b01111111110000000000000000000000"
-    assert bin(F32(float('inf'))) == "0b01111111100000000000000000000000"
+    assert bin(F32('nan')) == "0b01111111110000000000000000000000"
+    assert bin(F32('inf')) == "0b01111111100000000000000000000000"
 
-    assert bin(F64(float('nan'))) == "0b0111111111111000000000000000000000000000000000000000000000000000"
-    assert bin(F64(float('inf'))) == "0b0111111111110000000000000000000000000000000000000000000000000000"
+    assert bin(F64('nan')) == "0b0111111111111000000000000000000000000000000000000000000000000000"
+    assert bin(F64('inf')) == "0b0111111111110000000000000000000000000000000000000000000000000000"

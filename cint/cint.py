@@ -107,12 +107,16 @@ class Cint(object):
         return self.__stronger_type(other)(calc(other) ** self.value)
 
     def __truediv__(self, other):
+        if self.__class__ in FLOATS or other in FLOATS:
+            return self.__stronger_type(other)(self.value / calc(other))
         return self.__stronger_type(other)(self.value // calc(other))
 
     # __div__ is Python 2 only
     __div__ = __floordiv__ = __truediv__
 
     def __rtruediv__(self, other):
+        if self in FLOATS or other in FLOATS:
+            return self.__stronger_type(other)(self.value / calc(other))
         return self.__stronger_type(other)(calc(other) // self.value)
 
     # __rdiv__ is Python 2 only
@@ -198,6 +202,8 @@ class Cint(object):
         return self.__class__(self.value ** calc(other))
 
     def __itruediv__(self, other):
+        if self in FLOATS or other in FLOATS:
+            return self.__class__(self.value / calc(other))
         return self.__class__(self.value // calc(other))
 
     # __idiv__ is Python 2 only
