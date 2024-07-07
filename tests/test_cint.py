@@ -264,3 +264,11 @@ def _test_binary_representation_of_nan_and_inf():
 
     assert bin(F64('nan')) == "0b0111111111111000000000000000000000000000000000000000000000000000"
     assert bin(F64('inf')) == "0b0111111111110000000000000000000000000000000000000000000000000000"
+
+
+def test_from_le_and_from_be():
+    assert F32(39) == F32.from_le(0x421C0000)
+    assert F32(39) == F32.from_be(0x00001C42)
+
+    assert F64(39) == F64.from_le(0x4028000000000000)
+    assert F64(39) == F64.from_be(0x0000000000002840)

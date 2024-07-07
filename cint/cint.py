@@ -328,12 +328,45 @@ class F32(Cint, ctypes.c_float):
     CTYPEDEF = 'float'
     SIZE = 4    
 
+    @classmethod
+    def from_le(cls, val):
+        """
+        Create a F32 instance from a little-endian value.
+        """
+        bytes_val = val.to_bytes(4, byteorder='little')
+        return cls.from_buffer_copy(bytes_val)
+
+    @classmethod
+    def from_be(cls, val):
+        """
+        Create a F32 instance from a big-endian value.
+        """
+        bytes_val = val.to_bytes(4, byteorder='big')
+        return cls.from_buffer_copy(bytes_val)
+
 class F64(Cint, ctypes.c_double):
     MIN = 2 ** -1022
     MAX = (2 - 2 ** -52) * 2 ** 1023
     UNSIGNED = False
     CTYPEDEF = 'double'
     SIZE = 8
+
+    @classmethod
+    def from_le(cls, val):
+        """
+        Create a F64 instance from a little-endian value.
+        """
+        bytes_val = val.to_bytes(8, byteorder='little')
+        return cls.from_buffer_copy(bytes_val)
+    
+
+    @classmethod
+    def from_be(cls, val):
+        """
+        Create a F64 instance from a big-endian value.
+        """
+        bytes_val = val.to_bytes(8, byteorder='big')
+        return cls.from_buffer_copy(bytes_val)
 
 SIGNED_INTS = (I8, I16, I32, I64)
 UNSIGNED_INTS = (U8, U16, U32, U64)
