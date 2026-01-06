@@ -1,4 +1,5 @@
 import ctypes
+import ctypes.util
 import sys
 
 # Py2/Py3 compatibility layer
@@ -14,10 +15,17 @@ def calc(v):
 
 class Cint(object):
     def __init__(self, val):
-        if isinstance(val, (int, long)):
+        if isinstance(val, (int, long, float)):
             super(Cint, self).__init__(val)
         elif isinstance(val, ctypes._SimpleCData):
             super(Cint, self).__init__(val.value)
+        elif isinstance(val, str):
+            if val.lower() == "nan":
+                super(Cint, self).__init__(float('nan'))
+            elif val.lower() == "inf":
+                super(Cint, self).__init__(float('inf'))
+            elif val.lower() == "-inf":
+                super(Cint, self).__init__(float('-inf'))
         else:
             raise ValueError("Wrong value passed to __init__")
 
@@ -58,13 +66,18 @@ class Cint(object):
     # Cint details below
     @classmethod
     def __stronger_type(cls, other):
-        if isinstance(other, (int, long)):
+        if isinstance(other, (int, long, float)):
             return cls
-        elif not isinstance(other, INTS):
+        elif not isinstance(other, (INTS, FLOATS)):
             raise ValueError("Cannot perform arithmetic operations between %s and %s" % (cls, type(other)))
 
         other = other.__class__
 
+        # FLOATS are *stronger* than INTS
+        if (cls in INTS and other in FLOATS) or (cls in FLOATS and other in INTS):
+            return other if cls in INTS else cls
+
+        
         return cls if (cls.SIZE, cls.UNSIGNED) > (other.SIZE, other.UNSIGNED) else other
 
     if sys.version_info.major == 2:
@@ -94,18 +107,24 @@ class Cint(object):
         return self.__stronger_type(other)(calc(other) ** self.value)
 
     def __truediv__(self, other):
+        if self.__class__ in FLOATS or other in FLOATS:
+            return self.__stronger_type(other)(self.value / calc(other))
         return self.__stronger_type(other)(self.value // calc(other))
 
     # __div__ is Python 2 only
     __div__ = __floordiv__ = __truediv__
 
     def __rtruediv__(self, other):
+        if self in FLOATS or other in FLOATS:
+            return self.__stronger_type(other)(self.value / calc(other))
         return self.__stronger_type(other)(calc(other) // self.value)
 
     # __rdiv__ is Python 2 only
     __rdiv__ = __rfloordiv__ = __rtruediv__
 
     def __mod__(self, other):
+        if isinstance(other, (float, F32, F64)) or isinstance(self.value, (float, F32, F64)):
+            raise TypeError(f"unsupported operand type(s) for %: {self.__class__.__name__} and 'float'")
         return self.__stronger_type(other)(self.value % calc(other))
 
     def __rmod__(self, other):
@@ -183,12 +202,16 @@ class Cint(object):
         return self.__class__(self.value ** calc(other))
 
     def __itruediv__(self, other):
+        if self in FLOATS or other in FLOATS:
+            return self.__class__(self.value / calc(other))
         return self.__class__(self.value // calc(other))
 
     # __idiv__ is Python 2 only
     __idiv__ = __ifloordiv__ = __itruediv__
 
     def __imod__(self, other):
+        if isinstance(other, (float, F32, F64)) or isinstance(self.value, (float, F32, F64)):
+            raise TypeError(f"unsupported operand type(s) for %=: {self.__class__.__name__} and 'float'")
         return self.__class__(self.value % calc(other))
 
     def __irshift__(self, other):
@@ -296,12 +319,65 @@ class U64(Cint, ctypes.c_uint64):
     SIZE = 8
 
 
+class F32(Cint, ctypes.c_float):
+    # MIN/MAX are not defined for floats
+    # Update: well, maybe they are definded after all
+    MIN = 2 ** -126
+    MAX = (2 - 2 ** -23) * 2 ** 127
+    UNSIGNED = False
+    CTYPEDEF = 'float'
+    SIZE = 4    
+
+    @classmethod
+    def from_le(cls, val):
+        """
+        Create a F32 instance from a little-endian value.
+        """
+        bytes_val = val.to_bytes(4, byteorder='little')
+        return cls.from_buffer_copy(bytes_val)
+
+    @classmethod
+    def from_be(cls, val):
+        """
+        Create a F32 instance from a big-endian value.
+        """
+        bytes_val = val.to_bytes(4, byteorder='big')
+        return cls.from_buffer_copy(bytes_val)
+
+class F64(Cint, ctypes.c_double):
+    MIN = 2 ** -1022
+    MAX = (2 - 2 ** -52) * 2 ** 1023
+    UNSIGNED = False
+    CTYPEDEF = 'double'
+    SIZE = 8
+
+    @classmethod
+    def from_le(cls, val):
+        """
+        Create a F64 instance from a little-endian value.
+        """
+        bytes_val = val.to_bytes(8, byteorder='little')
+        return cls.from_buffer_copy(bytes_val)
+    
+
+    @classmethod
+    def from_be(cls, val):
+        """
+        Create a F64 instance from a big-endian value.
+        """
+        bytes_val = val.to_bytes(8, byteorder='big')
+        return cls.from_buffer_copy(bytes_val)
+
 SIGNED_INTS = (I8, I16, I32, I64)
 UNSIGNED_INTS = (U8, U16, U32, U64)
 
+FLOATS = (F32, F64)
+
 INTS = SIGNED_INTS + UNSIGNED_INTS
+SIGNED_TYPES = SIGNED_INTS + FLOATS
+TYPES = INTS + FLOATS
 
 # fix MIN/MAX values to have proper type
-for _type in INTS:
+for _type in TYPES:
     _type.MIN = _type(_type.MIN)
     _type.MAX = _type(_type.MAX)
